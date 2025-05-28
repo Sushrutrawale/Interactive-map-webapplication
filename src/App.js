@@ -7,6 +7,12 @@ import { CardComponent } from './components/card-component';
 import { SearchBar } from './components/search-bar';
 import { useEffect, useState } from 'react';
 import { Col, Row, Spinner } from 'react-bootstrap';
+import { Alert, Slide, Snackbar } from '@mui/material';
+
+function SlideSnackbar(props){
+    return <Slide {...props} direction="left"/>
+}
+
 
 function App() {
   const [profiles,setProfiles] = useState([{id:0,name:'',description:'',image:'',position:{lat:0,lng:0}}]);
@@ -14,13 +20,14 @@ function App() {
   const [selectedProfile,setSelectedProfile] =useState(null);
   const [searchQuery,setSearchQuery]=useState("");
   const [loading,setLoading] = useState(true);
+  const [alertMessage,setAlertMessage] = useState({open:false, message:'' ,severity:'info'});
 
   useEffect(()=>{
     setTimeout(()=>{
       setProfiles(profilesData);
       setFilteredProfiles(profilesData);
       setLoading(false);
-    },2000)
+    },1000)
   },[]);
 
   useEffect(()=>{
@@ -36,7 +43,10 @@ function App() {
 
   const handleDeleteProfile = (id)=>{
     const updatedProfiles = profiles.filter((profile)=> profile.id!==id);
-    setProfiles(updatedProfiles);
+    setTimeout(()=>{
+      setProfiles(updatedProfiles);
+    },1000)
+    setAlertMessage({open:true, message:'Profile Deleted...', severity:'success'});
   };
 
   const handleSelectProfile = (profile)=>{
@@ -44,7 +54,7 @@ function App() {
   }
 
   return (
-    <div className='container-fluid'>
+    <div className='container-fluid body'>
       <h1 className='text-center my-4'><PersonTwoTone sx={{fontSize:'45px'}}/> User Profiles</h1>
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery}/>
       <Row className='main-row'>
@@ -55,7 +65,7 @@ function App() {
                 <Spinner animation='border' variant='primary' size='lg'/>
               </div>
             ):(
-              <Row>
+              <Row className='mt-2'>
                 {
                   filteredProfiles.map((profile)=>(
                     <Col md={6} key={profile.id} className='mb-4'>
@@ -88,6 +98,12 @@ function App() {
           </div>
         </Col>
       </Row>
+      <Snackbar open={alertMessage.open} autoHideDuration={1000} onClose={()=> setAlertMessage({...alertMessage, open:false})}
+        anchorOrigin={{vertical:'top', horizontal:'right'}} TransitionComponent={SlideSnackbar}>
+          <Alert severity={alertMessage.severity} variant='filled' onClose={()=> setAlertMessage({...alertMessage, open: false})}>
+            {alertMessage.message}
+          </Alert>
+      </Snackbar>
     </div>
   );
 }

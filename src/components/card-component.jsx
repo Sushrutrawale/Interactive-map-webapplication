@@ -1,7 +1,6 @@
 import { AssistantDirectionTwoTone, DeleteTwoTone } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Button} from "@mui/material";
 import { Card } from "react-bootstrap";
-
 
 export function CardComponent({profile,onDelete,onSelect}){
     return(

@@ -1,9 +1,14 @@
 import { AccountCircle, DescriptionTwoTone, ImageTwoTone, PersonAddTwoTone } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Alert, Button, Slide, Snackbar } from "@mui/material";
 import { useState } from "react"
 import { Form, InputGroup } from "react-bootstrap";
 
+function SlideSnackbar(props){
+    return <Slide {...props} direction="left"/>
+}
+
 export function AdminPanel({onAddProfile}){
+    const [alert,SetAlert] = useState({open:false, message:'', severity:'info'});
     const [formData,setFormData] = useState({
         name:'',
         description:'',
@@ -18,7 +23,8 @@ export function AdminPanel({onAddProfile}){
 
     const handleSubmit = (e)=>{
         e.preventDefault();
-        const newProfile = {
+        setTimeout(()=>{
+            const newProfile = {
             id: Date.now(),
             name: formData.name,
             description: formData.description,
@@ -30,6 +36,8 @@ export function AdminPanel({onAddProfile}){
         };
         onAddProfile(newProfile);
         setFormData({name:'',description:'',image:'',lat:'',lng:''});
+        },1000);
+        SetAlert({open:true, message:'Profile added successfuly...', severity:'success'});
     }
 
     return(
@@ -105,6 +113,12 @@ export function AdminPanel({onAddProfile}){
                     Add Profile
                 </Button>
             </Form>
+            <Snackbar open={alert.open} autoHideDuration={1000} onClose={()=>SetAlert({...alert, open:false})}
+                anchorOrigin={{vertical:'top',horizontal:'right'}} TransitionComponent={SlideSnackbar}>
+                    <Alert severity={alert.severity} variant="filled" onClose={()=> SetAlert({...alert, open:false})}>
+                        {alert.message}
+                    </Alert>
+            </Snackbar>
         </div>
     )
 }
